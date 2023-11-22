@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   TextInput,
@@ -8,13 +8,17 @@ import {
   Text,
 } from 'react-native';
 import ButtonApp from '../../components/ButtonApp';
-import {AppContext} from '../../store/context/AppContext';
 import {useNavigation} from '@react-navigation/native';
 import {Fonts} from '../../constants/UIKit';
-import { NavigationScreen } from '../../navigation/NavigationStack';
+import {NavigationScreen} from '../../navigation/NavigationStack';
+// use redux
+import configureStore from '../../store/redux/ReduxStore';
+import {useDispatch} from 'react-redux';
+import {logIn} from '../../store/redux/states/sessionState';
+type AppDispatch = typeof configureStore.dispatch;
 
 const LogInScreen: React.FC = () => {
-  const {setUserLoggedIn} = useContext(AppContext);
+  const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
   const [user, setUser] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -30,7 +34,7 @@ const LogInScreen: React.FC = () => {
   const handleLogin = () => {
     if (user === 'adminUser' && password === '12345678') {
       console.log('User did login');
-      setUserLoggedIn && setUserLoggedIn(true);
+      dispatch(logIn());
       navigation.reset({
         index: 0,
         routes: [{name: NavigationScreen.Home.name}],

@@ -10,12 +10,17 @@ import {
   NavigationScreen,
   RootStackParamList,
 } from '../../navigation/NavigationStack';
+// use redux
+import configureStore from '../../store/redux/ReduxStore';
+import {useDispatch} from 'react-redux';
+import {logOut} from '../../store/redux/states/sessionState';
 
 type HomeScreenProps = StackScreenProps<RootStackParamList, 'Home'>;
+type AppDispatch = typeof configureStore.dispatch;
 
 const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
-  const {quiz, fetchQuiz, updateQuizStatus, setUserLoggedIn} =
-    useContext(AppContext);
+  const dispatch = useDispatch<AppDispatch>();
+  const {quiz, fetchQuiz, updateQuizStatus} = useContext(AppContext);
   const [modalVisible, setModalVisible] = useState(false);
 
   useLayoutEffect(() => {
@@ -26,17 +31,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           style={styles.logOutBtn}
           onPress={() => {
             console.log('user did logout');
-            setUserLoggedIn(false);
+            dispatch(logOut());
             navigation.reset({
               index: 0,
               routes: [{name: NavigationScreen.Primary.name}],
+              animation: false,
             });
           }}>
           <Text style={styles.logOutBtnText}>logout</Text>
         </TouchableOpacity>
       ),
     });
-  }, [navigation, setUserLoggedIn]);
+  }, [dispatch, navigation]);
 
   useEffect(() => {
     if (quiz === undefined) {

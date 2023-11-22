@@ -1,14 +1,14 @@
-import {configureStore} from "@reduxjs/toolkit";
-import {Quiz, QuizState} from "../models/Quiz";
-import {Question} from "../models/Question";
+import {configureStore} from '@reduxjs/toolkit';
+import {sessionSlice} from './states/sessionState';
+import {UserSession} from '../sessionStorage/useSessionStorage';
 
+// interface of main state
 export interface AppStore {
-  loggedIn: boolean;
-  quiz?: Quiz;
+  session: UserSession;
 }
 
-export default configureStore<AppStore> {
+export default configureStore<AppStore>({
   reducer: {
-
-  }
-};
+    session: sessionSlice.reducer,
+  },
+});
