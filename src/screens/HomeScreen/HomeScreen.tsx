@@ -1,6 +1,5 @@
-import React, {useContext, useEffect, useState, useLayoutEffect} from 'react';
+import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {AppContext} from '../../store/context/AppContext';
 import ModalQuizView from '../../components/ModalQuizView';
 import HomeQuizStateView from '../../components/HomeQuizStateView';
 import {QuizState} from '../../store/models/Quiz';
@@ -11,16 +10,18 @@ import {
   RootStackParamList,
 } from '../../navigation/NavigationStack';
 // use redux
-import configureStore from '../../store/redux/ReduxStore';
+import {useSelector} from 'react-redux';
+import configureStore, {AppStore} from '../../store/redux/ReduxStore';
 import {useDispatch} from 'react-redux';
 import {logOut} from '../../store/redux/states/sessionState';
+import {fetchQuiz, updateQuizStatus} from '../../store/redux/states/quizStore';
 
 type HomeScreenProps = StackScreenProps<RootStackParamList, 'Home'>;
 type AppDispatch = typeof configureStore.dispatch;
 
 const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const dispatch = useDispatch<AppDispatch>();
-  const {quiz, fetchQuiz, updateQuizStatus} = useContext(AppContext);
+  const quiz = useSelector((state: AppStore) => state.quiz);
   const [modalVisible, setModalVisible] = useState(false);
 
   useLayoutEffect(() => {
@@ -45,9 +46,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   }, [dispatch, navigation]);
 
   useEffect(() => {
-    if (quiz === undefined) {
+    if (quiz.questions.length <= 0) {
       setTimeout(() => {
-        fetchQuiz();
+        dispatch(fetchQuiz());
       }, 2000);
     }
   });
@@ -62,31 +63,30 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const handleUserInteractionButton = () => {
     if (quiz && quiz.state === QuizState.unStarted) {
-      updateQuizStatus(QuizState.inProgress);
+      dispatch(updateQuizStatus(QuizState.inProgress));
     }
     openModal();
   };
 
   const completeQuizHandler = () => {
     closeModal();
-    updateQuizStatus(QuizState.done);
+    dispatch(updateQuizStatus(QuizState.done));
   };
 
   return (
     <View style={styles.component}>
-      {quiz === undefined ? (
+      {quiz.questions.length <= 0 ? (
         <Text style={styles.loadingLabel}>loading ...</Text>
       ) : (
         <>
           <HomeQuizStateView
-            state={quiz?.state ?? QuizState.unStarted}
+            state={quiz.state}
             action={handleUserInteractionButton}
           />
           <ModalQuizView
             isVisible={modalVisible}
             onClose={closeModal}
             onCompleteQuiz={completeQuizHandler}
-            quiz={quiz}
           />
         </>
       )}

@@ -1,12 +1,16 @@
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {View, Text, StyleSheet, ScrollView, Animated} from 'react-native';
 import {Fonts} from '../../constants/UIKit';
 import AnswersView from '../../components/AnswersView';
 import CategoryTagView from '../../components/CategoryTagView';
 import {Question} from '../../store/models/Question';
-import {AppContext} from '../../store/context/AppContext';
 import {QuizState} from '../../store/models/Quiz';
+// use redux
+import configureStore from '../../store/redux/ReduxStore';
+import {useDispatch} from 'react-redux';
+import {updateQuestion} from '../../store/redux/states/quizStore';
 
+type AppDispatch = typeof configureStore.dispatch;
 interface QuestionScreenProps {
   question: Question;
   index: number;
@@ -21,7 +25,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = ({
   quizState,
 }) => {
   const fadeOutAnimation = useRef(new Animated.Value(0)).current;
-  const context = useContext(AppContext);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     Animated.timing(fadeOutAnimation, {
@@ -34,7 +38,7 @@ const QuestionScreen: React.FC<QuestionScreenProps> = ({
   //user interaction
   const onChooseAnswerHandler = (answer: string) => {
     question.userSelection = answer;
-    context.updateQuestion(question);
+    dispatch(updateQuestion(question));
   };
 
   return (
@@ -54,18 +58,6 @@ const QuestionScreen: React.FC<QuestionScreenProps> = ({
           isQuizDone={quizState === QuizState.done}
         />
       </ScrollView>
-      {/* {quizState && quizState === QuizState.done && question.userSelection ? (
-        <View style={styles.result}>
-          <Text
-            style={
-              styles.userSelectionText
-            }>{`You chose: ${question.userSelection} `}</Text>
-          <Text
-            style={
-              styles.userSelectionText
-            }>{`correct answer: ${question.correct_answer} `}</Text>
-        </View>
-      ) : null} */}
       <Text>
         Question {index + 1} of {totalQuestions}
       </Text>

@@ -1,19 +1,15 @@
 import React from 'react';
 import {View, Text, Modal, TouchableOpacity, StyleSheet} from 'react-native';
 import QuizScreen from '../../screens/QuizScreen/QuizScreen';
-import {Quiz} from '../../store/models/Quiz';
-
 interface ModalQuizViewProps {
   isVisible: boolean;
   onClose: () => void;
   onCompleteQuiz: () => void;
-  quiz: Quiz;
 }
 
 const ModalQuizView: React.FC<ModalQuizViewProps> = ({
   isVisible,
   onClose,
-  quiz,
   onCompleteQuiz,
 }) => {
   return (
@@ -27,7 +23,7 @@ const ModalQuizView: React.FC<ModalQuizViewProps> = ({
           <TouchableOpacity onPress={() => onClose()}>
             <Text style={styles.textClose}>Close Modal [x]</Text>
           </TouchableOpacity>
-          <QuizScreen quiz={quiz} onComplete={onCompleteQuiz} />
+          <QuizScreen onComplete={onCompleteQuiz} />
         </View>
       </View>
     </Modal>

@@ -1,10 +1,13 @@
 import {StyleSheet, View, Dimensions, Text} from 'react-native';
 import React from 'react';
-import {Quiz, QuizState} from '../../store/models/Quiz';
+import {QuizState} from '../../store/models/Quiz';
 import PagerView from 'react-native-pager-view';
 import QuestionScreen from '../QuestionScreen/QuestionScreen';
 import ButtonApp from '../../components/ButtonApp';
 import {Fonts} from '../../constants/UIKit';
+// redux
+import {useSelector} from 'react-redux';
+import {AppStore} from '../../store/redux/ReduxStore';
 
 ////// NOTE: PagerView have an issue when we return a null component like { null }
 //*https://github.com/callstack/react-native-pager-view/issues/300
@@ -12,14 +15,14 @@ import {Fonts} from '../../constants/UIKit';
 // /node_modules/react-native-pager-view/src/utils.tsx
 
 export interface QuizScreenProps {
-  quiz: Quiz;
   onComplete: () => void;
 }
 
 const widthScreen = Dimensions.get('screen').width;
 const heightScreen = Dimensions.get('screen').height;
 
-const QuizScreen: React.FC<QuizScreenProps> = ({quiz, onComplete}) => {
+const QuizScreen: React.FC<QuizScreenProps> = ({onComplete}) => {
+  const quiz = useSelector((state: AppStore) => state.quiz);
   const questions = quiz.questions;
 
   const onPageChanged = (event: {nativeEvent: {position: number}}) => {
@@ -49,7 +52,9 @@ const QuizScreen: React.FC<QuizScreenProps> = ({quiz, onComplete}) => {
         {quiz.state === QuizState.done && (
           <View style={styles.completeQuizview}>
             <Text style={styles.textTitle}>This is your Score:</Text>
-            <Text style={styles.textTitle}>{`${calculateScore()} of ${questions.length}`}</Text>
+            <Text style={styles.textTitle}>{`${calculateScore()} of ${
+              questions.length
+            }`}</Text>
             <Text>slide to see answers</Text>
           </View>
         )}
