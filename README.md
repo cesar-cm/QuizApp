@@ -21,7 +21,7 @@ This project uses:
 - ***Axios*** to get the data from the Quiz API.
 - ***React native Navigation*** to show the corresponding screens according to the session object.
 - ***Async storage*** to store the session object.
-- ***Context API*** to manage the state of the app.
+- ***Redux API*** to manage the state of the app.
 - ***Pager View*** a npm pacage to show Page View.
 
 ### Important Note
@@ -38,7 +38,7 @@ on the path:
 /node_modules/react-native-pager-view/src/utils.tsx
 ```
 
-this is a known issue, check here:
+this because there is aknown issue on the pager view library, check here:
 
 ```
 https://github.com/callstack/react-native-pager-view/issues/300
